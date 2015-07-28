@@ -48,7 +48,7 @@ var requests = ['/countries', '/cities', '/populations'];
 var responses = {};
 var param = prompt('Enter the name of a continent, country or city', 'Japan');
 
-for (i = 0; i < 3; i++) {
+for (var i = 0; i < 3; i++) {
 	calculate(requests[i]);
 }
 
@@ -56,27 +56,28 @@ function calculate(request){
 	var callback = function (error, result) {
 		responses[request] = result;
 		var l = [];
-		for (K in responses)
-			l.push(K);
+		for (var k in responses) {
+			l.push(k);
+		}
 
 		if (l.length == 3) {
 			var c = [], cc = [], p = 0;
-			for (i = 0; i < responses['/countries'].length; i++) {
+			for (var i = 0; i < responses['/countries'].length; i++) {
 				if (responses['/countries'][i].continent === param) {
 					c.push(responses['/countries'][i].name);
 				}
 			}
 
 			if(c.length) {
-				for (i = 0; i < responses['/cities'].length; i++) {
-					for (j = 0; j < c.length; j++) {
+				for (var i = 0; i < responses['/cities'].length; i++) {
+					for (var j = 0; j < c.length; j++) {
 						if (responses['/cities'][i].country === c[j]) {
 							cc.push(responses['/cities'][i].name);
 						}
 					}
 				}
 			} else {
-				for (i = 0; i < responses['/cities'].length; i++) {
+				for (var i = 0; i < responses['/cities'].length; i++) {
 					if (responses['/cities'][i].country === param) {
 						cc.push(responses['/cities'][i].name);
 					}
@@ -84,15 +85,15 @@ function calculate(request){
 			}
 
 			if(cc.length) {
-				for (i = 0; i < responses['/populations'].length; i++) {
-					for (j = 0; j < cc.length; j++) {
+				for (var i = 0; i < responses['/populations'].length; i++) {
+					for (var j = 0; j < cc.length; j++) {
 						if (responses['/populations'][i].name === cc[j]) {
 							p += responses['/populations'][i].count;
 						}
 					}
 				}
 			} else {
-				for (i = 0; i < responses['/populations'].length; i++) {
+				for (var i = 0; i < responses['/populations'].length; i++) {
 					if (responses['/populations'][i].name === param) {
 						p += responses['/populations'][i].count;
 					}
