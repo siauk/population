@@ -44,65 +44,69 @@ function getData(url, callback) {
 /**
  * Ваши изменения ниже
  */
-var requests = ['/countries', '/cities', '/populations'];
-var responses = {};
-var param = prompt('Enter the name of a continent, country or city', 'Japan');
+var requests = ['/countries', '/cities', '/populations'],
+	responses = {},
+	param = prompt('Enter the name of a continent, country or city', 'Japan');
 
-for (var i = 0; i < 3; i++) {
-	calculate(requests[i]);
-}
+for (var i = 0; i < requests.length; i++) {
+	(function (request){
+		var callback = function (error, result) {
+			responses[request] = result;
 
-function calculate(request){
-	var callback = function (error, result) {
-		responses[request] = result;
-		var l = [];
-		for (var k in responses) {
-			l.push(k);
-		}
-
-		if (l.length == 3) {
-			var c = [], cc = [], p = 0;
-			for (var i = 0; i < responses['/countries'].length; i++) {
-				if (responses['/countries'][i].continent === param) {
-					c.push(responses['/countries'][i].name);
+			var l = [];
+			for (var k in responses) {
+				if(responses.hasOwnProperty(k)) {
+					l.push(k);
 				}
 			}
 
-			if(c.length) {
-				for (var i = 0; i < responses['/cities'].length; i++) {
-					for (var j = 0; j < c.length; j++) {
-						if (responses['/cities'][i].country === c[j]) {
-							cc.push(responses['/cities'][i].name);
+			if (l.length == requests.length) {
+				var countries = [],
+					cities = [],
+					population = 0;
+
+				for (var i = 0; i < responses['/countries'].length; i++) {
+					if (responses['/countries'][i].continent === param) {
+						countries.push(responses['/countries'][i].name);
+					}
+				}
+
+				if(countries.length) {
+					for (var i = 0; i < responses['/cities'].length; i++) {
+						for (var j = 0; j < countries.length; j++) {
+							if (responses['/cities'][i].country === countries[j]) {
+								cities.push(responses['/cities'][i].name);
+							}
+						}
+					}
+				} else {
+					for (var i = 0; i < responses['/cities'].length; i++) {
+						if (responses['/cities'][i].country === param) {
+							cities.push(responses['/cities'][i].name);
 						}
 					}
 				}
-			} else {
-				for (var i = 0; i < responses['/cities'].length; i++) {
-					if (responses['/cities'][i].country === param) {
-						cc.push(responses['/cities'][i].name);
-					}
-				}
-			}
 
-			if(cc.length) {
-				for (var i = 0; i < responses['/populations'].length; i++) {
-					for (var j = 0; j < cc.length; j++) {
-						if (responses['/populations'][i].name === cc[j]) {
-							p += responses['/populations'][i].count;
+				if(cities.length) {
+					for (var i = 0; i < responses['/populations'].length; i++) {
+						for (var j = 0; j < cities.length; j++) {
+							if (responses['/populations'][i].name === cities[j]) {
+								population += responses['/populations'][i].count;
+							}
+						}
+					}
+				} else {
+					for (var i = 0; i < responses['/populations'].length; i++) {
+						if (responses['/populations'][i].name === param) {
+							population += responses['/populations'][i].count;
 						}
 					}
 				}
-			} else {
-				for (var i = 0; i < responses['/populations'].length; i++) {
-					if (responses['/populations'][i].name === param) {
-						p += responses['/populations'][i].count;
-					}
-				}
+
+				console.log('Total population in ' + param + ': ' + population);
 			}
+		};
 
-			console.log('Total population in ' + param + ': ' + p);
-		}
-	};
-
-	getData(request, callback);
+		getData(request, callback);
+	})(requests[i]);
 }
